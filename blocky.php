@@ -3,7 +3,7 @@
  * Plugin Name: Blocky! - Additional Content Blocks
  * Plugin URI: http://cameronjones.x10.mx/projects/blocky
  * Description: Add additional sections to your page content - no theme editing required!
- * Version: 1.1.3
+ * Version: 1.2.0
  * Author: Cameron Jones
  * Author URI: http://cameronjones.x10.mx
  * Text Domain: blocky
@@ -28,6 +28,8 @@ add_action( 'save_post', 'blocky_dynamic_save_postdata' );
 add_action( 'admin_enqueue_scripts', 'blocky_admin_resources' );
 add_action( 'wp_ajax_nopriv_ajax_wp_editor', 'blocky_ajax_wp_editor' );
 add_action( 'wp_ajax_ajax_wp_editor', 'blocky_ajax_wp_editor' );
+add_action( 'admin_notices', 'blocky_admin_notice' );
+add_action( 'admin_init', 'blocky_admin_notice_ignore' );
 
 add_filter( 'the_content', 'blocky_content_filter' );
 add_filter( 'tiny_mce_before_init', 'blocky_get_TinyMCE_Settings' );
@@ -76,7 +78,7 @@ function blocky_content_filter( $content ) {
 	$blocky_new_content .= $blocky_closetag;
 	if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 		foreach( $blocky_additional_content[0] as $blocky_section ){
-			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.1.3">', $blocky_opentag );
+			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.1.4">', $blocky_opentag );
 			$blocky_new_content .= do_shortcode( $blocky_section['content'] );
 			$blocky_new_content .= $blocky_closetag;
 		}
@@ -100,7 +102,7 @@ function blocky_dynamic_add_custom_box() {
 	//$blocky_post_types = get_post_types( '', 'names' ); 
 	if( isset( $blocky_post_types ) && !empty( $blocky_post_types ) ) {
 		foreach( $blocky_post_types as $blocky_post_type => $active ){
-			add_meta_box( 'blocky_meta_box', __( 'Additional Content', 'additional_content_sections' ), 'blocky_dynamic_inner_custom_box', $blocky_post_type );
+			add_meta_box( 'blocky_meta_box', __( 'Additional Content', 'blocky' ), 'blocky_dynamic_inner_custom_box', $blocky_post_type );
 		}
 	}
 }
@@ -133,9 +135,9 @@ function blocky_dynamic_inner_custom_box() {
         foreach( $extra_content as $section ) {
 			echo '<div id="extra_content_section_' . $count . '" class="extra_content_section">';
 			echo '<h3>Section ' . $count . '</h3>';
-			echo '<p>Section class: <input type="text" name="blocky_extra_content[' . $count . '][class]" value="' . $section['class'] . '" /></p>';
+			echo '<p>' . __( 'Section class', 'blocky' ) . ': <input type="text" name="blocky_extra_content[' . $count . '][class]" value="' . $section['class'] . '" /></p>';
 			wp_editor( $section['content'], 'blocky_extra_content_' . $count, array( 'textarea_name' => 'blocky_extra_content[' . $count . '][content]', 'textarea_rows' => 15 ) );
-			echo '<div class="remove_content button deletion">Remove</div>';
+			echo '<div class="remove_content button deletion">' . __( 'Remove', 'blocky' ) . '</div>';
 			echo '</div>';
 			$count++;
         }
@@ -143,7 +145,7 @@ function blocky_dynamic_inner_custom_box() {
 
     ?>
 	<span id="new_content_area"></span>
-	<a class="add_content button button-primary"><?php _e('Add new Content Section'); ?></a>
+	<a class="add_content button button-primary"><?php _e( 'Add new Content Section', 'blocky' ); ?></a>
     <?php if( $experimental === 'true' ) {?>
 	<script>
     var $ =jQuery.noConflict();
@@ -151,7 +153,7 @@ function blocky_dynamic_inner_custom_box() {
         var count = <?php echo $count-1; ?>;
         $(".add_content").click(function() {
 			$.ajax({
-				url : '<?php echo admin_url('admin-ajax.php'); ?>',
+				url : '<?php echo admin_url( 'admin-ajax.php' ); ?>',
 				data : { 
 					id: 'blocky_extra_content',
 					action: 'ajax_wp_editor',
@@ -163,9 +165,9 @@ function blocky_dynamic_inner_custom_box() {
 					
 					if (data != 0) {
 						var new_section = '<div id="extra_content_section_' + count + '" class="extra_content_section"><h3>Section ' + count + '</h3>';
-						new_section += '<p>Section class: <input type="text" name="blocky_extra_content[' + count + '][class]" /></p>';
+						new_section += '<p><?php _e( 'Section class', 'blocky' );?>: <input type="text" name="blocky_extra_content[' + count + '][class]" /></p>';
 						new_section += data;
-						new_section += '<div class="remove_content button error">Remove</div></div>';
+						new_section += '<div class="remove_content button error"><?php _e( 'Remove', 'blocky' );?></div></div>';
 						$('#new_content_area').append( new_section );
 					}
 				}
@@ -187,7 +189,7 @@ function blocky_dynamic_inner_custom_box() {
         var count = <?php echo $count; ?>;
         $(".add_content").click(function() {
 			var new_section = '<div id="extra_content_section_' + count + '" class="extra_content_section"><h3>Section ' + count + '</h3>';
-			new_section += '<p><em>You will need to save your post in order to enable the media uploader and plain text editor for this section.</em></p>';
+			new_section += '<p><em><?php __( 'You will need to save your post in order to enable the media uploader and plain text editor for this section.', 'blocky' );?></em></p>';
 			new_section += '<p>Section class: <input type="text" name="blocky_extra_content[' + count + '][class]" /></p>';
 			new_section += '<textarea name="blocky_extra_content[' + count + '][content]" id="extra_content_'+count+'" class="tinymce"></textarea>'; //AJAX to add new editor
 			new_section += '<div class="remove_content button error">Remove</div></div>';
@@ -263,7 +265,7 @@ function blocky_admin_menu() {
 	//SVG Icon for settings page - http://www.mobilefish.com/services/base64/base64.php
 	$icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiCgkgd2lkdGg9IjQ4cHgiIGhlaWdodD0iNDhweCIgdmlld0JveD0iMCAwIDQ4IDQ4IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0OCA0ODsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxwb2x5Z29uIHN0eWxlPSJmaWxsOiNGRkZGRkY7IiBwb2ludHM9IjQwLjYwNyw0MC42MDcgMzQuOTUyLDQwLjYwNyAzNC45NTIsNDcuMzkzIDQ3LjM5Myw0Ny4zOTMgNDcuMzkzLDM0Ljk1MiA0MC42MDcsMzQuOTUyIAkiLz4KCTxyZWN0IHg9IjE4LjUyNCIgeT0iNDAuNjA3IiBzdHlsZT0iZmlsbDojRkZGRkZGOyIgd2lkdGg9IjEwLjk1MyIgaGVpZ2h0PSI2Ljc4NSIvPgoJPHBvbHlnb24gc3R5bGU9ImZpbGw6I0ZGRkZGRjsiIHBvaW50cz0iNy4zOTMsMzQuOTUyIDAuNjA3LDM0Ljk1MiAwLjYwNyw0Ny4zOTMgMTMuMDQ3LDQ3LjM5MyAxMy4wNDcsNDAuNjA3IDcuMzkzLDQwLjYwNyAJIi8+Cgk8cmVjdCB4PSIwLjYwNyIgeT0iMTguNTI0IiBzdHlsZT0iZmlsbDojRkZGRkZGOyIgd2lkdGg9IjYuNzg1IiBoZWlnaHQ9IjEwLjk1MyIvPgoJPHBvbHlnb24gc3R5bGU9ImZpbGw6I0ZGRkZGRjsiIHBvaW50cz0iNy4zOTMsNy4zOTMgMTMuMDQ3LDcuMzkzIDEzLjA0NywwLjYwNyAwLjYwNywwLjYwNyAwLjYwNywxMy4wNDcgNy4zOTMsMTMuMDQ3IAkiLz4KCTxyZWN0IHg9IjE4LjUyNCIgeT0iMC42MDciIHN0eWxlPSJmaWxsOiNGRkZGRkY7IiB3aWR0aD0iMTAuOTUzIiBoZWlnaHQ9IjYuNzg1Ii8+Cgk8cG9seWdvbiBzdHlsZT0iZmlsbDojRkZGRkZGOyIgcG9pbnRzPSIzNC45NTIsMC42MDcgMzQuOTUyLDcuMzkzIDQwLjYwNyw3LjM5MyA0MC42MDcsMTMuMDQ3IDQ3LjM5MywxMy4wNDcgNDcuMzkzLDAuNjA3IAkiLz4KCTxyZWN0IHg9IjQwLjYwNyIgeT0iMTguNTI0IiBzdHlsZT0iZmlsbDojRkZGRkZGOyIgd2lkdGg9IjYuNzg1IiBoZWlnaHQ9IjEwLjk1MyIvPgoJPHBvbHlnb24gc3R5bGU9ImZpbGw6I0ZGRkZGRjsiIHBvaW50cz0iMjYuMTksMzYuMDUxIDI2LjE5LDI2LjgyMSAzNS40MjYsMjYuODIxIDM1LjQyNiwyMi41NDUgMjYuMTksMjIuNTQ1IDI2LjE5LDEzLjMxMSAKCQkyMS45MiwxMy4zMTEgMjEuOTIsMjIuNTQ1IDEyLjY4MiwyMi41NDUgMTIuNjgyLDI2LjgyMSAyMS45MiwyNi44MjEgMjEuOTIsMzYuMDUxIAkiLz4KPC9nPgo8L3N2Zz4=';
 	//create new top-level menu
-	add_menu_page('Blocky! Settings', 'Blocky!', 'administrator', 'blocky-settings', 'blocky_settings_page' , $icon );
+	add_menu_page( __('Blocky! Settings', 'blocky' ), __( 'Blocky!', 'blocky' ), 'administrator', 'blocky-settings', 'blocky_settings_page' , $icon );
 
 	//call register settings function
 	add_action( 'admin_init', 'blocky_settings' );
@@ -281,22 +283,22 @@ function blocky_settings_page() {
 	$blocky_post_types = get_post_types( '', 'names' ); 
 ?>
 <div class="wrap">
-<h2>Blocky!</h2>
+<h1>Blocky!</h1>
 
 <form method="post" action="options.php">
     <?php settings_fields( 'blocky_settings' ); ?>
     <?php do_settings_sections( 'blocky_settings' ); ?>
     <table class="form-table">
         <tr valign="top">
-            <th scope="row">Content Sections Tag (default div)</th>
+            <th scope="row"><?php _e( 'Content Sections Tag (default div)','blocky' );?></th>
             <td><input type="text" name="blocky_tag" value="<?php echo esc_attr( get_option('blocky_tag') ); ?>" placeholder="div" /></td>
         </tr>
        <!-- <tr valign="top">
-            <th scope="row">Use experimental editor (use at your own risk, will break things)</th>
+            <th scope="row"><?php _e( 'Use experimental editor (use at your own risk, will break things)', 'blocky' );?></th>
             <td><input type="checkbox" name="blocky_experimental_editor" <?php checked( get_option( 'blocky_experimental_editor' ), 'true' );?> value="true" /></td>
         </tr>-->
         <tr valign="top">
-            <th scope="row">Post types</th>
+            <th scope="row"><?php _e( 'Post types', 'blocky' );?></th>
             <td>
               	<?php $checked = get_option( 'blocky_post_types' );?>
 				<?php foreach( $blocky_post_types as $post_type ) {?>
@@ -327,4 +329,24 @@ function blocky_yoast_seo_content_filter( $post_content ) {
 	}
  
 	return $post_content;
+}
+
+function blocky_admin_notice() {
+	$screen = get_current_screen();
+	//Only display on the dashboard, settings and plugins pages
+	if( $screen->parent_base === 'blocky-settings' || $screen->base === 'dashboard' || $screen->base === 'plugins' ){
+		global $current_user ;
+		$user_id = $current_user->ID;
+		if ( !get_user_meta( $user_id, 'blocky_admin_notice_ignore' ) || get_user_meta( $user_id, 'blocky_admin_notice_ignore' ) === false ) {
+			echo '<div class="updated" id="blocky-review"><p>' . __( 'Thank you for using Blocky!. If you enjoy using it, please take the time to <a href="https://wordpress.org/support/view/plugin-reviews/blocky?rate=5#postform" target="_blank">leave a review</a>. Thanks.', 'blocky' ) . ' <a href="?blocky_admin_notice_ignore=0" class="notice-dismiss"><span class="screen-reader-text">' . __( 'Dismiss this notice.', 'blocky' ) . '</span></a></p></div>';
+		}
+	}
+}
+
+function blocky_admin_notice_ignore() {
+	global $current_user;
+    $user_id = $current_user->ID;
+    if ( isset($_GET['blocky_admin_notice_ignore']) && '0' == $_GET['blocky_admin_notice_ignore'] ) {
+         update_user_meta($user_id, 'blocky_admin_notice_ignore', 'true', true);
+	}
 }
