@@ -3,7 +3,7 @@
  * Plugin Name: Blocky! - Additional Content Blocks
  * Plugin URI: http://cameronjones.x10.mx/projects/blocky
  * Description: Add additional sections to your page content - no theme editing required!
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Cameron Jones
  * Author URI: http://cameronjones.x10.mx
  * Text Domain: blocky
@@ -78,7 +78,7 @@ function blocky_content_filter( $content ) {
 	$blocky_new_content .= $blocky_closetag;
 	if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 		foreach( $blocky_additional_content[0] as $blocky_section ){
-			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.1.4">', $blocky_opentag );
+			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.1">', $blocky_opentag );
 			$blocky_new_content .= do_shortcode( $blocky_section['content'] );
 			$blocky_new_content .= $blocky_closetag;
 		}
@@ -134,7 +134,7 @@ function blocky_dynamic_inner_custom_box() {
     if ( isset( $extra_content ) && !empty( $extra_content) && count( $extra_content ) > 0 ) {
         foreach( $extra_content as $section ) {
 			echo '<div id="extra_content_section_' . $count . '" class="extra_content_section">';
-			echo '<h3>Section ' . $count . '</h3>';
+			echo '<h3>' . __( 'Section', 'blocky' ) . $count . '</h3>';
 			echo '<p>' . __( 'Section class', 'blocky' ) . ': <input type="text" name="blocky_extra_content[' . $count . '][class]" value="' . $section['class'] . '" /></p>';
 			wp_editor( $section['content'], 'blocky_extra_content_' . $count, array( 'textarea_name' => 'blocky_extra_content[' . $count . '][content]', 'textarea_rows' => 15 ) );
 			echo '<div class="remove_content button deletion">' . __( 'Remove', 'blocky' ) . '</div>';
@@ -164,7 +164,7 @@ function blocky_dynamic_inner_custom_box() {
 				success : function(data){
 					
 					if (data != 0) {
-						var new_section = '<div id="extra_content_section_' + count + '" class="extra_content_section"><h3>Section ' + count + '</h3>';
+						var new_section = '<div id="extra_content_section_' + count + '" class="extra_content_section"><h3><?php _e( 'Section', 'blocky' ); ?> ' + count + '</h3>';
 						new_section += '<p><?php _e( 'Section class', 'blocky' );?>: <input type="text" name="blocky_extra_content[' + count + '][class]" /></p>';
 						new_section += data;
 						new_section += '<div class="remove_content button error"><?php _e( 'Remove', 'blocky' );?></div></div>';
@@ -188,11 +188,11 @@ function blocky_dynamic_inner_custom_box() {
     $(document).ready(function() {
         var count = <?php echo $count; ?>;
         $(".add_content").click(function() {
-			var new_section = '<div id="extra_content_section_' + count + '" class="extra_content_section"><h3>Section ' + count + '</h3>';
-			new_section += '<p><em><?php __( 'You will need to save your post in order to enable the media uploader and plain text editor for this section.', 'blocky' );?></em></p>';
-			new_section += '<p>Section class: <input type="text" name="blocky_extra_content[' + count + '][class]" /></p>';
+			var new_section = '<div id="extra_content_section_' + count + '" class="extra_content_section"><h3><?php _e( 'Section', 'blocky' );?> ' + count + '</h3>';
+			new_section += '<p><em><?php _e( 'You will need to save your post in order to enable the media uploader and plain text editor for this section.', 'blocky' );?></em></p>';
+			new_section += '<p><?php _e( 'Section class', 'blocky' );?>: <input type="text" name="blocky_extra_content[' + count + '][class]" /></p>';
 			new_section += '<textarea name="blocky_extra_content[' + count + '][content]" id="extra_content_'+count+'" class="tinymce"></textarea>'; //AJAX to add new editor
-			new_section += '<div class="remove_content button error">Remove</div></div>';
+			new_section += '<div class="remove_content button error"><?php _e( 'Remove', 'blocky' ); ?></div></div>';
 			$('#new_content_area').append( new_section );
 			tinymce.init({
 				selector: ".tinymce",
