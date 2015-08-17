@@ -3,7 +3,7 @@
  * Plugin Name: Blocky! - Additional Content Blocks
  * Plugin URI: http://cameronjones.x10.mx/projects/blocky
  * Description: Add additional sections to your page content - no theme editing required!
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Cameron Jones
  * Author URI: http://cameronjones.x10.mx
  * Text Domain: blocky
@@ -24,12 +24,13 @@
 defined( 'ABSPATH' ) or die();
 
 add_action( 'add_meta_boxes', 'blocky_dynamic_add_custom_box' );
-add_action( 'save_post', 'blocky_dynamic_save_postdata' );
+add_action( 'save_post', 'blocky_dynamic_save_postdata', 50 );
 add_action( 'admin_enqueue_scripts', 'blocky_admin_resources' );
 add_action( 'wp_ajax_nopriv_ajax_wp_editor', 'blocky_ajax_wp_editor' );
 add_action( 'wp_ajax_ajax_wp_editor', 'blocky_ajax_wp_editor' );
 add_action( 'admin_notices', 'blocky_admin_notice' );
 add_action( 'admin_init', 'blocky_admin_notice_ignore' );
+add_action( 'admin_menu', 'blocky_admin_menu' );
 
 add_filter( 'the_content', 'blocky_content_filter' );
 add_filter( 'tiny_mce_before_init', 'blocky_get_TinyMCE_Settings' );
@@ -78,7 +79,7 @@ function blocky_content_filter( $content ) {
 	$blocky_new_content .= $blocky_closetag;
 	if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 		foreach( $blocky_additional_content[0] as $blocky_section ){
-			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.1">', $blocky_opentag );
+			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.2">', $blocky_opentag );
 			$blocky_new_content .= do_shortcode( $blocky_section['content'] );
 			$blocky_new_content .= $blocky_closetag;
 		}
@@ -134,7 +135,7 @@ function blocky_dynamic_inner_custom_box() {
     if ( isset( $extra_content ) && !empty( $extra_content) && count( $extra_content ) > 0 ) {
         foreach( $extra_content as $section ) {
 			echo '<div id="extra_content_section_' . $count . '" class="extra_content_section">';
-			echo '<h3>' . __( 'Section', 'blocky' ) . $count . '</h3>';
+			echo '<h3>' . __( 'Section', 'blocky' ) . ' ' . $count . '</h3>';
 			echo '<p>' . __( 'Section class', 'blocky' ) . ': <input type="text" name="blocky_extra_content[' . $count . '][class]" value="' . $section['class'] . '" /></p>';
 			wp_editor( $section['content'], 'blocky_extra_content_' . $count, array( 'textarea_name' => 'blocky_extra_content[' . $count . '][content]', 'textarea_rows' => 15 ) );
 			echo '<div class="remove_content button deletion">' . __( 'Remove', 'blocky' ) . '</div>';
@@ -227,25 +228,25 @@ function blocky_dynamic_inner_custom_box() {
 function blocky_dynamic_save_postdata( $post_id ) {
     // verify if this is an auto save routine. 
     // If it is our form has not been submitted, so we dont want to do anything
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
         return;
-
+	}
     // verify this came from the our screen and with proper authorization,
     // because save_post can be triggered at other times
-    if ( !isset( $_POST['blocky_dynamicMeta_noncename'] ) )
+    if ( !isset( $_POST['blocky_dynamicMeta_noncename'] ) ){
         return;
-
-    if ( !wp_verify_nonce( $_POST['blocky_dynamicMeta_noncename'], plugin_basename( __FILE__ ) ) )
+	}
+    if ( !wp_verify_nonce( $_POST['blocky_dynamicMeta_noncename'], plugin_basename( __FILE__ ) ) ){
         return;
-
+	}
     // OK, we're authenticated: we need to find and save the data
 
     $blocky_extra_content = $_POST['blocky_extra_content'];
 	
 	$post_type = get_post_type( $post_id );
 	$allowed = wp_kses_allowed_html( $post_type );
-	foreach( $blocky_extra_content as $content ){
-		$content = wp_kses( $content, $allowed );
+	foreach( $blocky_extra_content as $content_to_be_sanitized ){
+		$content_to_be_sanitized = wp_kses( $content, $allowed );
 	}
 
     update_post_meta( $post_id, 'blocky_extra_content', $blocky_extra_content );
@@ -256,9 +257,6 @@ function blocky_get_TinyMCE_Settings( $in ) {
 	$TinyMCE_settings = $in;
 	return $in;
 }
-
-// create custom plugin settings menu
-add_action('admin_menu', 'blocky_admin_menu');
 
 function blocky_admin_menu() {
 
