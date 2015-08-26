@@ -4,7 +4,7 @@ Tags: admin, builder, cms, css, class, page, post, page builder, content, post m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLV5HPHSPM2BG&lc=AU&item_name=Cameron%20Jones%20Web%20Development¤cy_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Requires at least: 4.2
 Tested up to: 4.3
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Blocky! is a revolutionary new way to manage your content and add additional sec
 == Description ==
 Have ever encountered the need to add new sections to your page content without needing to add divs to your content, editing your theme files or using a widget? Are you a WordPress novice and have no idea what that previous sentance means? Fear no longer - Blocky! is here. 
 
-Blocky! allows you to add a new section to the content of your posts and pages without needing to know any web coding. Simply click on the "Add New Content Section" button and get typing. Blocky! brings in a new WYSIWYG editor, allowing you to add more content the same way you would with your main post content. Want to change the layout of your additional content sections? Simply add classes to your content section and use your stylesheet to do the rest. Would you rather not wrap your content in a `div`? Simply edit it in the settings page. Only want to use Blocky! on select post types? You can choose which post types to enable Blocky! from the settings page.
+Blocky! allows you to add a new section to the content of your posts and pages without needing to know any web coding. Simply click on the "Add New Content Section" button and get typing. Blocky! brings in a new WYSIWYG editor, allowing you to add more content the same way you would with your main post content. Want to change the layout of your additional content sections? Simply add classes to your content section and use your stylesheet to do the rest. Would you rather not wrap your content in a `div`? Simply edit it in the settings page. Only want to use Blocky! on select post types? You can choose which post types to enable Blocky! from the settings page. Blocky! also grabs the current setting for the WYSIWYG editors, meaning that your Blocky! editors are consistent with the content editors even if you are using a plugin such as TinyMCE Advanced that extends the capabilities of the editor.
 
 For more advanced uses, use the `get_additional_content( $postID );` to return Blocky!'s additional content as a multidimensional array with each section containing an array with both the class and the content.
 
@@ -57,6 +57,12 @@ If you're using Jetpack's Embed Shortcodes module and Blocky 1.2.1 or below you 
 3. Blocky! in action
 
 == Changelog ==
+= 1.2.3 =
+* Direct link to setting page from plugins page
+* Setting Blocky! to be active on posts and pages by default when first installing
+* Text fixes
+* Additional conflict fixes
+* Sanitizing class as well as content
 = 1.2.2 =
 * Fixing conflict with Jetpack's Shortcode Embeds module
 = 1.2.0 =
@@ -79,11 +85,17 @@ If you're using Jetpack's Embed Shortcodes module and Blocky 1.2.1 or below you 
 * Initial release
 
 == Upgrade Notice ==
-= 1.2.2 =
-1.2.2 fixes a conflict with Jetpack. Please update.
-= 1.1.1 =
-This version includes an addition that allows shortcodes to be called in additional content sections. Please upgrade immediately.
-= 1.1.0 =
-Version 1.1.0 introduces the `get_additional_content()` function, allowing you to use Blocky! for more advanced uses.
-= 1.0.0 =
-Initial release
+= 1.2.3 =
+This version further fixes some Jetpack conflicts. Please update immediately.
+
+== Advanced Use Case ==
+To use Blocky! without the content filter, use this template
+
+Replace `<?php the_content();?>` with `<?php echo do_shortcode( get_the_content() );?>`
+
+Where you want your additional content to display, add this code
+
+`<?php $additional_content = get_additional_content();
+for( $i = 0; $i < count($additional_content); $i++ ) {
+	echo $additional_content[$i]['content'];
+}?>`
