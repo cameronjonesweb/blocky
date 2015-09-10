@@ -104,7 +104,7 @@ function blocky_dynamic_add_custom_box() {
 	$blocky_post_types = get_option( 'blocky_post_types' );
 	if( isset( $blocky_post_types ) && !empty( $blocky_post_types ) ) {
 		foreach( $blocky_post_types as $blocky_post_type => $active ){
-			add_meta_box( 'blocky_meta_box', __( 'Additional Content', 'blocky' ), 'blocky_dynamic_inner_custom_box', $blocky_post_type );
+			add_meta_box( 'blocky_meta_box', __( 'Additional Content', 'blocky' ), 'blocky_dynamic_inner_custom_box', $blocky_post_type, 'normal', 'high' );
 		}
 	}
 }
