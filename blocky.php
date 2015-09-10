@@ -3,7 +3,7 @@
  * Plugin Name: Blocky! - Additional Content Blocks
  * Plugin URI: http://cameronjones.x10.mx/projects/blocky
  * Description: Add additional sections to your page content - no theme editing required!
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: Cameron Jones
  * Author URI: http://cameronjones.x10.mx
  * Text Domain: blocky
@@ -86,7 +86,7 @@ function blocky_content_filter( $content ) {
 	$blocky_new_content .= $blocky_closetag;
 	if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 		foreach( $blocky_additional_content[0] as $blocky_section ){
-			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.3">', $blocky_opentag );
+			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.4">', $blocky_opentag );
 			$blocky_new_content .= do_shortcode( $blocky_section['content'] );
 			$blocky_new_content .= $blocky_closetag;
 		}
@@ -245,8 +245,8 @@ function blocky_dynamic_save_postdata( $post_id ) {
 	
 	$post_type = get_post_type( $post_id );
 	$allowed = wp_kses_allowed_html( $post_type );
-	for( $i = 0; $i < count( $blocky_extra_content['content'] ); $i++ ){
-		$blocky_extra_content[$i]['class'] = sanitize_text_field( $blocky_extra_content['class'] );
+	for( $i = 0; $i < count( $blocky_extra_content ); $i++ ){
+		$blocky_extra_content[$i]['class'] = sanitize_text_field( $blocky_extra_content[$i]['class'] );
 		$blocky_extra_content[$i]['content'] = wp_kses( $blocky_extra_content[$i]['content'], $allowed );
 	}
 
