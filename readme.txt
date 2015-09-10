@@ -4,7 +4,7 @@ Tags: admin, builder, cms, css, class, page, post, page builder, content, post m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLV5HPHSPM2BG&lc=AU&item_name=Cameron%20Jones%20Web%20Development¤cy_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Requires at least: 4.2
 Tested up to: 4.3
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -57,6 +57,8 @@ If you're using Jetpack's Embed Shortcodes module and Blocky 1.2.1 or below you 
 3. Blocky! in action
 
 == Changelog ==
+= 1.2.6 =
+* Fixes another undefined index bug
 = 1.2.5 =
 * Setting priority so additional content is grouped with the main post content
 = 1.2.4 =
