@@ -3,7 +3,7 @@
  * Plugin Name: Blocky! - Additional Content Blocks
  * Plugin URI: http://cameronjones.x10.mx/projects/blocky
  * Description: Add additional sections to your page content - no theme editing required!
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Cameron Jones
  * Author URI: http://cameronjones.x10.mx
  * Text Domain: blocky
@@ -24,7 +24,7 @@
 defined( 'ABSPATH' ) or die();
 
 //Actions
-add_action( 'add_meta_boxes', 'blocky_dynamic_add_custom_box' );
+add_action( 'add_meta_boxes', 'blocky_dynamic_add_custom_box', 1 );
 add_action( 'save_post', 'blocky_dynamic_save_postdata', 50 );
 add_action( 'admin_enqueue_scripts', 'blocky_admin_resources' );
 add_action( 'wp_ajax_nopriv_ajax_wp_editor', 'blocky_ajax_wp_editor' );
@@ -86,7 +86,7 @@ function blocky_content_filter( $content ) {
 	$blocky_new_content .= $blocky_closetag;
 	if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 		foreach( $blocky_additional_content[0] as $blocky_section ){
-			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.4">', $blocky_opentag );
+			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.5">', $blocky_opentag );
 			$blocky_new_content .= do_shortcode( $blocky_section['content'] );
 			$blocky_new_content .= $blocky_closetag;
 		}
