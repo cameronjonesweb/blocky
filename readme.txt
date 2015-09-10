@@ -4,7 +4,7 @@ Tags: admin, builder, cms, css, class, page, post, page builder, content, post m
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=WLV5HPHSPM2BG&lc=AU&item_name=Cameron%20Jones%20Web%20Development¤cy_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Requires at least: 4.2
 Tested up to: 4.3
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2
 License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ Have ever encountered the need to add new sections to your page content without 
 
 Blocky! allows you to add a new section to the content of your posts and pages without needing to know any web coding. Simply click on the "Add New Content Section" button and get typing. Blocky! brings in a new WYSIWYG editor, allowing you to add more content the same way you would with your main post content. Want to change the layout of your additional content sections? Simply add classes to your content section and use your stylesheet to do the rest. Would you rather not wrap your content in a `div`? Simply edit it in the settings page. Only want to use Blocky! on select post types? You can choose which post types to enable Blocky! from the settings page. Blocky! also grabs the current setting for the WYSIWYG editors, meaning that your Blocky! editors are consistent with the content editors even if you are using a plugin such as TinyMCE Advanced that extends the capabilities of the editor.
 
-For more advanced uses, use the `get_additional_content( $postID );` to return Blocky!'s additional content as a multidimensional array with each section containing an array with both the class and the content.
+For more advanced uses, use the `get_additional_content( $postID );` to return Blocky!'s additional content as a multidimensional array with each section containing an array with both the class and the content. See "Other Notes" for more details.
 
 If you like the plugin, please take the time to leave a review.
 
@@ -91,6 +91,10 @@ If you're using Jetpack's Embed Shortcodes module and Blocky 1.2.1 or below you 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.2.7 =
+
+If you're using a version above 1.2.3 and less than 1.2.7 you need to update immediately.
 
 = 1.2.3 =
 

@@ -3,7 +3,7 @@
  * Plugin Name: Blocky! - Additional Content Blocks
  * Plugin URI: http://cameronjones.x10.mx/projects/blocky
  * Description: Add additional sections to your page content - no theme editing required!
- * Version: 1.2.6
+ * Version: 1.2.7
  * Author: Cameron Jones
  * Author URI: http://cameronjones.x10.mx
  * Text Domain: blocky
@@ -86,7 +86,7 @@ function blocky_content_filter( $content ) {
 	$blocky_new_content .= $blocky_closetag;
 	if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 		foreach( $blocky_additional_content[0] as $blocky_section ){
-			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.6">', $blocky_opentag );
+			$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="1.2.7">', $blocky_opentag );
 			$blocky_new_content .= do_shortcode( $blocky_section['content'] );
 			$blocky_new_content .= $blocky_closetag;
 		}
@@ -241,7 +241,7 @@ function blocky_dynamic_save_postdata( $post_id ) {
 	}
     // OK, we're authenticated: we need to find and save the data
 
-	if( isset( $blocky_extra_content ) && !empty( $blocky_extra_content ) ) {
+	if( isset( $_POST['blocky_extra_content'] ) ) {
 	    $blocky_extra_content = $_POST['blocky_extra_content'];
 	} else {
 		$blocky_extra_content = NULL;
@@ -249,11 +249,9 @@ function blocky_dynamic_save_postdata( $post_id ) {
 	
 	$post_type = get_post_type( $post_id );
 	$allowed = wp_kses_allowed_html( $post_type );
-	if( count( $blocky_extra_content ) > 0 ) {
-		for( $i = 0; $i < count( $blocky_extra_content ); $i++ ){
-			$blocky_extra_content[$i]['class'] = sanitize_text_field( $blocky_extra_content[$i]['class'] );
-			$blocky_extra_content[$i]['content'] = wp_kses( $blocky_extra_content[$i]['content'], $allowed );
-		}
+	for( $i = 0; $i < count( $blocky_extra_content ); $i++ ){
+		$blocky_extra_content[$i]['class'] = sanitize_text_field( $blocky_extra_content[$i]['class'] );
+		$blocky_extra_content[$i]['content'] = wp_kses( $blocky_extra_content[$i]['content'], $allowed );
 	}
 
     update_post_meta( $post_id, 'blocky_extra_content', $blocky_extra_content );
