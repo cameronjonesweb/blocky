@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: Blocky! - Additional Content Blocks
- * Plugin URI: http://cameronjones.x10.mx/projects/blocky
+ * Plugin URI: http://cameronjonesweb.com.au/projects/blocky/
  * Description: Add additional sections to your page content - no theme editing required!
  * Version: 1.2.8
  * Author: Cameron Jones
- * Author URI: http://cameronjones.x10.mx
+ * Author URI: http://cameronjonesweb.com.au
  * Text Domain: blocky
  * License: GPLv2
  
