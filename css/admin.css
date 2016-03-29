@@ -2,3 +2,6 @@
 .remove_content.button{margin:10px 0 0;width:100%;box-sizing:border-box;text-align:center;}
 #new_content_area .extra_content_section .mce-container.mce-panel.mce-tinymce{border-left:1px solid #e5e5e5;border-right:1px solid #e5e5e5;}
 #blocky-review{position:relative;}
+.blocky_background{width:100%;table-layout:fixed;}
+.blocky_background td{vertical-align:top;}
+.blocky_bgclr-wrapper>*{vertical-align:middle;}

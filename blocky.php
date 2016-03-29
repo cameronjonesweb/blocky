@@ -86,7 +86,8 @@ class blocky {
 		$blocky_new_content .= $blocky_closetag;
 		if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 			foreach( $blocky_additional_content[0] as $blocky_section ){
-				$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" data-blocky-version="' . CJW_BACB_PLUGIN_VER . '">', $blocky_opentag );
+				$style = ( !empty( $blocky_section['bgimg'] ) ? 'background-image:url(' . esc_url( $blocky_section['bgimg'] ) . ');' : '' ) . ( !empty( $blocky_section['bgclr'] ) ? 'background-color:' . $blocky_section['bgclr'] . ';' : '' );
+				$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" ' . ( !empty( $style ) ? 'style="' . $style . '"' : '' ) . ' data-blocky-version="' . CJW_BACB_PLUGIN_VER . '">', $blocky_opentag );
 				//$blocky_new_content .= apply_filters( 'the_content', $blocky_section['content'] );
 				$blocky_new_content .= $blocky_section['content'];
 				$blocky_new_content .= $blocky_closetag;
@@ -99,6 +100,9 @@ class blocky {
 	function blocky_admin_resources() {
 	        wp_enqueue_style( 'blocky-admin-css', CJW_BACB_PLUGIN_URL . '/css/admin.css' );
 	        wp_enqueue_script( 'blocky-admin-js', CJW_BACB_PLUGIN_URL . 'js/admin.js', array( 'yoast-seo' ), NULL, true );
+	        wp_enqueue_script( 'blocky-upload-helper', CJW_BACB_PLUGIN_URL . 'js/uploader.js', array(), NULL, true );
+	        wp_enqueue_style( 'wp-color-picker' ); 
+	        wp_enqueue_script( 'blocky-colour-picker', CJW_BACB_PLUGIN_URL . 'js/colourpicker.js', array( 'wp-color-picker' ), NULL, true );
 	        //wp_enqueue_script('acf_yoast', get_template_directory_uri() . '/assets/js/acf_yoast.js', array('yoast-seo'), false, true);
 	}
 
@@ -140,6 +144,16 @@ class blocky {
 				echo '<div id="extra_content_section_' . $count . '" class="extra_content_section">';
 				echo '<h3>' . __( 'Section', 'blocky' ) . ' ' . $count . '</h3>';
 				echo '<p>' . __( 'Section class', 'blocky' ) . ': <input type="text" name="blocky_extra_content[' . $count . '][class]" value="' . $section['class'] . '" /></p>';
+				echo '<p>' . __( 'Section Background' ) . ':' . '</p>';
+				echo '<table class="blocky_background">';
+				echo '<tr>';
+				echo '<td>';
+				echo  '<p>' . __( 'Image', 'blocky' ) . ': <input id="blocky_extra_content-' . $count . '_bgimg_button" class="button image_upload_button" type="button" value="Set Image"> <a href="#" id="blocky_extra_content_' . $count . '_bgimg-clear" class="button image_upload_clear">Clear Image</a><br/><img src="' . esc_url( $section['bgimg'] ) . '" id="blocky_extra_content_' . $count . '_bgimg_preview" style="max-width:100%;height:auto;" class="image_upload_preview"><input id="blocky_extra_content_' . $count . '_bgimg" type="hidden" name="blocky_extra_content[' . $count . '][bgimg]" value="' . $section['bgimg'] . '" class="image_upload_value">' . '</p>';
+				echo '</td><td>';
+				echo '<p class="blocky_bgclr-wrapper"><label>' . __( 'Colour', 'blocky' ) . ':</label> <input type="text" name="blocky_extra_content[' . $count . '][bgclr]" value="' . $section['bgclr'] . '" class="blocky_colour" /></p>';
+				echo '</td>';
+				echo '</tr>';
+				echo '</table>';
 				wp_editor( $section['content'], 'blocky_extra_content_' . $count, array( 'textarea_name' => 'blocky_extra_content[' . $count . '][content]', 'editor_class' => 'blocky_extra_content', 'textarea_rows' => 15 ) );
 				echo '<div class="remove_content button deletion">' . __( 'Remove', 'blocky' ) . '</div>';
 				echo '</div>';
@@ -195,9 +209,12 @@ class blocky {
 				var new_section = '<div id="extra_content_section_' + count + '" class="extra_content_section"><h3><?php _e( 'Section', 'blocky' );?> ' + count + '</h3>';
 				new_section += '<p><em><?php _e( 'You will need to save your post in order to enable the media uploader and plain text editor for this section.', 'blocky' );?></em></p>';
 				new_section += '<p><?php _e( 'Section class', 'blocky' );?>: <input type="text" name="blocky_extra_content[' + count + '][class]" /></p>';
+				new_section += '<p><?php _e( 'Section Background', 'blocky' );?>:</p>';
+				new_section += '<table class="blocky_background"><tbody><tr><td><p>Image: <input id="blocky_extra_content_' + count + '_bgimg_button" class="button image_upload_button" type="button" value="Set Image"> <a href="#" id="blocky_extra_content_' + count + 'bgimg_clear" class="button image_upload_clear">Clear Image</a><br><img src="" id="blocky_extra_content_' + count + 'bgimg_preview" style="max-width:100%;height:auto;" class="image_upload_preview"><input id="blocky_extra_content_' + count + '_bgimg" type="hidden" name="blocky_extra_content[' + count + '][bgimg]" value="" class="image_upload_value"></p></td><td><p class="blocky_bgclr-wrapper"><label>Colour:</label> <input type="text" name="blocky_extra_content[' + count + '][bgclr]" value="" class="blocky_colour"></p></td></tr></tbody></table>';
 				new_section += '<textarea name="blocky_extra_content[' + count + '][content]" id="extra_content_'+count+'" class="tinymce"></textarea>'; //AJAX to add new editor
 				new_section += '<div class="remove_content button error"><?php _e( 'Remove', 'blocky' ); ?></div></div>';
 				$('#new_content_area').append( new_section );
+				blocky_colour_picker();
 				tinymce.init({
 					selector: ".tinymce",
 					file: false,
@@ -250,16 +267,14 @@ class blocky {
 			$blocky_extra_content = NULL;
 		}
 		
-		$post_type = get_post_type( $post_id );
-		if( $post_type === 'page' ) {
-			$post_type = 'post';
-		}
-		$allowed = wp_kses_allowed_html( $post_type );
+		$allowed = get_post_type( $post_id ) === 'page' ? wp_kses_allowed_html( 'post' ) : wp_kses_allowed_html( $post_type );
 		//Why on earth lists aren't included in allowed html in pages is beyond me
 		//$allowed = wp_kses_allowed_html( 'post' );
 		for( $i = 0; $i < count( $blocky_extra_content ); $i++ ){
 			$blocky_extra_content[$i]['class'] = sanitize_text_field( $blocky_extra_content[$i]['class'] );
 			$blocky_extra_content[$i]['content'] = wp_kses( $blocky_extra_content[$i]['content'], $allowed );
+			$blocky_extra_content[$i]['bgimg'] = esc_url_raw( $blocky_extra_content[$i]['bgimg'] );
+			$blocky_extra_content[$i]['bgclr'] = $this->blocky_sanitize_hex_color( $blocky_extra_content[$i]['bgclr'] );
 		}
 
 	    update_post_meta( $post_id, 'blocky_extra_content', $blocky_extra_content );
@@ -370,13 +385,22 @@ class blocky {
 	function blocky_activate() {
 	    // Make post and page selected by default if it's not set
 		$blocky_post_types = array( 'post' => 'true', 'page' => 'true' );
-		update_option( blocky_post_types, $blocky_post_types );
+		update_option( 'blocky_post_types', $blocky_post_types );
 	}
 
 	function blocky_action_links( $links ) {
 		$links[] = '<a href="'. esc_url( get_admin_url(null, 'options-general.php?page=blocky-settings') ) .'">Settings</a>';
 		$links[] = '<a href="https://profiles.wordpress.org/cameronjonesweb/#content-plugins' .'" target="_blank">More plugins by cameronjonesweb</a>';	
 		return $links;
+	}
+
+	function blocky_sanitize_hex_color( $colour ) {
+	    if ( '' === $colour )
+	        return '';
+	 
+	    // 3 or 6 hex digits, or the empty string.
+	    if ( preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', $colour ) )
+	        return $colour;
 	}
 
 }
@@ -393,7 +417,7 @@ function get_additional_content( $postID = NULL ) {
 	$blocky_additional_content = get_post_meta( $blocky_post_id, 'blocky_extra_content' );
 	if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 		foreach( $blocky_additional_content[0] as $blocky_section ){
-			$return[] = array( 'class' => $blocky_section['class'], 'content' => $blocky_section['content'] );
+			$return[] = array( 'class' => $blocky_section['class'], 'content' => $blocky_section['content'], 'bgimg' => $blocky_section['bgimg'] );
 		}
 	}
 	return $return;
