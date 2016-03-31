@@ -111,7 +111,7 @@ class blocky {
 
 		global $post;
 
-		if( $post->ID == get_option( 'page_for_posts') ) {
+		if( $post->ID == get_option( 'page_for_posts') && apply_filters( 'remove_content_blocks_on_page_for_posts', true ) === true ) {
 			return;
 		}
 
