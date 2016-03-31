@@ -108,6 +108,13 @@ class blocky {
 
 	// Adds a box to the main column on the Post and Page edit screens
 	function blocky_dynamic_add_custom_box() {
+
+		global $post;
+
+		if( $post->ID == get_option( 'page_for_posts') && apply_filters( 'remove_content_blocks_on_page_for_posts', true ) === true ) {
+			return;
+		}
+
 		$blocky_post_types = get_option( 'blocky_post_types' );
 		if( isset( $blocky_post_types ) && !empty( $blocky_post_types ) ) {
 			foreach( $blocky_post_types as $blocky_post_type => $active ){
