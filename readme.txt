@@ -57,6 +57,12 @@ If you're using Jetpack's Embed Shortcodes module and Blocky 1.2.1 or below you 
 3. Blocky! in action
 
 == Changelog ==
+= 1.3.0 =
+* Adds a new wrapper class
+* Partial YoastSEO.js compatibility
+* New setting to disable the_content filter for those using the get_additional_content() function
+* Background images and colours for content blocks
+* New filter that disables content blocks on the blog page (as they can't be access from the main query)
 = 1.2.8 =
 * Changes sanitization to only be dependent on posts instead of the post type
 = 1.2.7 =
