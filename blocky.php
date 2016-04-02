@@ -79,6 +79,7 @@ class blocky {
 			$blocky_opentag = '<' . $blocky_tag . '>';
 			$blocky_closetag = '</' . $blocky_tag . '>';
 		}
+		$blocky_default_class = get_option( 'blocky_default_class' );
 		
 		$blocky_new_content = NULL;
 		$blocky_new_content .= $blocky_opentag;
@@ -87,6 +88,7 @@ class blocky {
 		if( isset( $blocky_additional_content[0] ) && !empty( $blocky_additional_content[0] ) ) {
 			foreach( $blocky_additional_content[0] as $blocky_section ){
 				$style = ( !empty( $blocky_section['bgimg'] ) ? 'background-image:url(' . esc_url( $blocky_section['bgimg'] ) . ');' : '' ) . ( !empty( $blocky_section['bgclr'] ) ? 'background-color:' . $blocky_section['bgclr'] . ';' : '' );
+				$class = sanitize_text_field( $blocky_section['class'] ) . ' ' . apply_filters( 'blocky_default_class', $blocky_default_class );
 				$blocky_new_content .= str_replace( '>', ' class="' . $blocky_section['class'] . '" ' . ( !empty( $style ) ? 'style="' . $style . '"' : '' ) . ' data-blocky-version="' . CJW_BACB_PLUGIN_VER . '">', $blocky_opentag );
 				//$blocky_new_content .= apply_filters( 'the_content', $blocky_section['content'] );
 				$blocky_new_content .= $blocky_section['content'];
