@@ -310,6 +310,7 @@ class blocky {
 	function blocky_settings() {
 		//register our settings
 		register_setting( 'blocky_settings', 'blocky_tag' );
+		register_setting( 'blocky_settings', 'blocky_default_class' );
 		register_setting( 'blocky_settings', 'blocky_experimental_editor' );
 		register_setting( 'blocky_settings', 'blocky_post_types' );
 		register_setting( 'blocky_settings', 'blocky_disable_content_filter' );
@@ -328,6 +329,10 @@ class blocky {
 	        <tr valign="top">
 	            <th scope="row"><?php _e( 'Content Sections Tag (default div)', 'blocky' );?></th>
 	            <td><input type="text" name="blocky_tag" value="<?php echo esc_attr( get_option( 'blocky_tag' ) ); ?>" placeholder="div" /></td>
+	        </tr>
+	        <tr valign="top">
+	            <th scope="row"><?php _e( 'Default Content Section Class', 'blocky' );?></th>
+	            <td><input type="text" name="blocky_default_class" value="<?php echo esc_attr( get_option( 'blocky_default_class' ) ); ?>" /></td>
 	        </tr>
 	       <!-- <tr valign="top">
 	            <th scope="row"><?php _e( 'Use experimental editor (use at your own risk, will break things)', 'blocky' );?></th>
