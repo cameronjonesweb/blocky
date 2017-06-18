@@ -51,6 +51,7 @@ class blocky {
 		}
 		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'blocky_action_links' ) );
 		add_filter( 'body_class', array( $this, 'blocky_body_classes' ) );
+		add_filter( 'pre_get_posts', array( $this, 'blocky_search_filter' ) );
 
 		//Activation hook
 		register_activation_hook( __FILE__, array( $this, 'blocky_activate' ) );
@@ -415,6 +416,31 @@ class blocky {
 	    // 3 or 6 hex digits, or the empty string.
 	    if ( preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', $colour ) )
 	        return $colour;
+	}
+
+	function blocky_search_filter( $query ) {
+
+		if( $query->is_search() ) {
+
+			$meta_query = $query->get( 'meta_query' );
+
+			$meta_query_args = array_merge( $meta_query, array(
+
+				'compare' => 'AND',
+				array(
+
+					'key' => 'blocky_extra_content',
+					'value' => $query->query_vars['s'] = '',
+					'compare' => 'LIKE',
+
+				),
+
+			) );
+		
+			$query->set( 'meta_query', $meta_query_args );
+
+		}
+
 	}
 
 }
